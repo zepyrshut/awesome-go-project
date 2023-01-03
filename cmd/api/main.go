@@ -1,37 +1,48 @@
 package main
 
 import (
+	"awesome-go-project/internal/configuration"
+	"awesome-go-project/internal/handlers"
 	"awesome-go-project/internal/router"
 	"fmt"
+	"golang.org/x/exp/slog"
+	"io"
 	"net/http"
+	"os"
+	"time"
 )
+
+var app configuration.Application
 
 func main() {
 
-	//f, _ := xls.Open("example.xls", "utf-8")
-	//
-	//sheet := f.GetSheet(0)
-	//
-	//fmt.Println(sheet.Row(1).Col(2))
-	//
-	//if sheet1 := f.GetSheet(0); sheet1 != nil {
-	//	fmt.Println("total lines", sheet1.MaxRow, sheet1.Name)
-	//	for i := 0; i <= (int(sheet1.MaxRow)); i++ {
-	//		row1 := sheet1.Row(i)
-	//		lastCol := row1.LastCol()
-	//		for j := 0; j <= (int(lastCol)); j++ {
-	//			col := row1.Col(j)
-	//			fmt.Print(col)
-	//		}
-	//	}
-	//}
+	initializeSlog()
 
 	srv := &http.Server{
-		Addr:    "192.168.1.45:8080",
+		Addr:    ":8080",
 		Handler: router.Router(),
 	}
 
-	fmt.Println("Server is running on port 8080")
+	app.Logger.Info("Server started on port 8080")
 
-	srv.ListenAndServe()
+	handlers.NewHandlers(&app)
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		app.Logger.Error("Fatal error", err)
+		panic(err)
+	}
+}
+
+// This is a simple logger that I use.
+// More info here: https://www.youtube.com/watch?v=gd_Vyb5vEw0
+func initializeSlog() {
+	f, _ := os.OpenFile(fmt.Sprint("./logs/", time.Now().Format("2006-01-02"), ".log"), os.O_APPEND|os.O_CREATE|os.O_APPEND, 0666)
+	wrt := io.MultiWriter(os.Stdout, f)
+
+	th := slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}.NewTextHandler(wrt)
+
+	app.Logger = slog.New(th)
 }

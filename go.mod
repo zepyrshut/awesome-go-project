@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/extrame/xls v0.0.2-0.20200426124601-4a6cf263071b
 	github.com/go-chi/chi/v5 v5.0.8
+	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30
 )
 
 require (

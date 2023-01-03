@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
+// Router a simple router that uses chi.
 func Router() http.Handler {
 
 	r := chi.NewRouter()
 
-	r.Get("/test-http", handlers.TestHttp)
 	r.Get("/upload", handlers.GetUpload)
 	r.Post("/upload", handlers.PostUpload)
 

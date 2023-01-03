@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  digital-menu:
+    image: awesome-go:latest
+    container_name: awesome-go
+    ports:
+      - 8080:80
+    volumes:
+      - /data/awesome/app:/main
